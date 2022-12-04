@@ -12,19 +12,19 @@ make stop
 
 API:
 
-- Get all item groups:<br>
+Get all item groups:<br/>
 GET /api/item_groups
-<br>
-- Get item group by id<br>
+<br/><br/>
+Get item group by id:<br/>
 GET item_groups/:id
-<br>
-- Get items by item group id<br>
+<br/><br/>
+Get items by item group id:<br/>
 GET item_groups/:id/items
-<br>
-- Get all items<br>
+<br/><br/>
+Get all items:<br/>
 GET /items
-<br>
-- Get item by id<br>
+<br/><br/>
+Get item by id:<br/>
 GET /items/\<id\>
 
 ---
