@@ -1,0 +1,41 @@
+version: "2.11"
+
+services:
+  masterium-web-shop:
+    build: ./web-shop
+    command: /web-shop
+    network_mode: host
+    environment:
+      HOST: localhost
+      PORT: :3000
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: masterium
+      DB_USER: user
+      DB_PASSWD: qwerty
+      GIN_MODE: release
+    ports:
+      - "3000:3000"
+    container_name: "masterium-web-shop-container"
+    depends_on:
+      masterium-db:
+        condition: service_healthy
+
+  masterium-db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: masterium
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    container_name: "masterium-db-container"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d masterium"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
