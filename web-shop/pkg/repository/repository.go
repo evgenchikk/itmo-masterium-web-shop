@@ -14,6 +14,7 @@ type Authorization interface {
 type ItemGroup interface {
 	GetAll() ([]models.ItemGroup, error)
 	GetById(id int) (models.ItemGroup, error)
+	GetByCatgoryId(id int) ([]models.ItemGroup, error)
 }
 
 type Item interface {
@@ -22,10 +23,16 @@ type Item interface {
 	GetAllByItemGroupId(id int) ([]models.Item, error)
 }
 
+type Category interface {
+	GetAll() ([]models.Category, error)
+	GetById(id int) (models.Category, error)
+}
+
 type Repository struct {
 	Authorization
 	ItemGroup
 	Item
+	Category
 }
 
 func NewRepository(db *pgx.Conn) *Repository {
@@ -33,5 +40,6 @@ func NewRepository(db *pgx.Conn) *Repository {
 		Authorization: NewAuthPostgres(db),
 		ItemGroup:     NewItemGroupPostgres(db),
 		Item:          NewItemPostgres(db),
+		Category:      NewCategoryPostgres(db),
 	}
 }

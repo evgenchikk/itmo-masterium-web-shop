@@ -42,7 +42,7 @@ func (r *ItemGroupPostgres) GetAll() ([]models.ItemGroup, error) {
 func (r *ItemGroupPostgres) GetById(id int) (models.ItemGroup, error) {
 	var itemGroup models.ItemGroup
 
-	query := `SELECT id, category_id, name, image, description FROM ITEM_GROUPS WHERE id = $1`
+	query := `SELECT id, category_id, name, image, description FROM item_groups WHERE id = $1`
 	if err := r.db.QueryRow(
 		context.Background(),
 		query,
@@ -52,4 +52,24 @@ func (r *ItemGroupPostgres) GetById(id int) (models.ItemGroup, error) {
 	}
 
 	return itemGroup, nil
+}
+
+func (r *ItemGroupPostgres) GetByCatgoryId(id int) ([]models.ItemGroup, error) {
+	itemGroups := make([]models.ItemGroup, 0)
+
+	query := `SELECT id, category_id, name, image, description FROM item_groups WHERE category_id = $1 ORDER BY id`
+	var itemGroup models.ItemGroup
+	if _, err := r.db.QueryFunc(
+		context.Background(),
+		query,
+		[]interface{}{id},
+		[]interface{}{&itemGroup.Id, &itemGroup.Category_id, &itemGroup.Name, &itemGroup.Image, &itemGroup.Description},
+		func(pgx.QueryFuncRow) error {
+			itemGroups = append(itemGroups, itemGroup)
+			return nil
+		},
+	); err != nil {
+		return nil, err
+	}
+	return itemGroups, nil
 }

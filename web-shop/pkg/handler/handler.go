@@ -19,7 +19,7 @@ func NewHandler(services *service.Service) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.Default()
 
-	auth := router.Group("/auth")
+	auth := router.Group("auth")
 	{
 		auth.POST("sign-up", h.signUp)
 		auth.POST("sign-in", h.signIn)
@@ -27,14 +27,20 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	api := router.Group("api")
 	{
-		api.GET("item_groups", h.getAllItemGroups)
-		api.GET("item_groups/:id", h.getItemGroupById)
-		api.GET("item_groups/:id/items", h.getItemsByItemGroupId)
+		catalog := api.Group("catalog")
+		{
+			catalog.GET("groups", h.getAllItemGroups)
+			catalog.GET("groups/:id", h.getItemGroupById)
+			catalog.GET("groups/:id/items", h.getItemsByItemGroupId)
 
-		api.GET("items", h.getAllItems)
-		api.GET("items/:id", h.getItemById)
+			catalog.GET("items", h.getAllItems)
+			catalog.GET("items/:id", h.getItemById)
 
-		api.GET("users")
+			catalog.GET("categories", h.getAllCategories)
+			catalog.GET("categories/:id", h.getCategoryById)
+			catalog.GET("categories/:id/groups", h.getItemGroupsByCategoryId)
+		}
+
 	}
 
 	return router

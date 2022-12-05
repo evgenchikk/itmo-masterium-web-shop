@@ -15,6 +15,7 @@ type Authorization interface {
 type ItemGroup interface {
 	GetAllItemGroups() ([]models.ItemGroup, error)
 	GetItemGroupById(id int) (models.ItemGroup, error)
+	GetItemGroupsByCategoryId(id int) ([]models.ItemGroup, error)
 }
 
 type Item interface {
@@ -23,10 +24,16 @@ type Item interface {
 	GetAllItemsByItemGroupId(id int) ([]models.Item, error)
 }
 
+type Category interface {
+	GetAllCategories() ([]models.Category, error)
+	GetCategoryById(id int) (models.Category, error)
+}
+
 type Service struct {
 	Authorization
 	ItemGroup
 	Item
+	Category
 }
 
 func NewService(repo *repository.Repository) *Service {
@@ -34,5 +41,6 @@ func NewService(repo *repository.Repository) *Service {
 		Authorization: NewAuthService(repo.Authorization),
 		ItemGroup:     NewItemGroupService(repo.ItemGroup),
 		Item:          NewItemService(repo.Item),
+		Category:      NewCategoryService(repo.Category),
 	}
 }

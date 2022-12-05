@@ -22,3 +22,7 @@ func (s *ItemGroupService) GetAllItemGroups() ([]models.ItemGroup, error) {
 func (s *ItemGroupService) GetItemGroupById(id int) (models.ItemGroup, error) {
 	return s.repo.GetById(id)
 }
+
+func (s *ItemGroupService) GetItemGroupsByCategoryId(id int) ([]models.ItemGroup, error) {
+	return s.repo.GetByCatgoryId(id)
+}

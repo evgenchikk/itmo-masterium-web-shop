@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/evgenchikk/itmo-web-shop/config"
 	"github.com/evgenchikk/itmo-web-shop/pkg/handler"
@@ -54,16 +55,21 @@ func main() {
 	log.Printf("Server successfuly started on %s:%s", config.Host, config.Port)
 
 	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
 
 	log.Printf("Server is shutting down...")
-
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer func() {
+		cancel()
+	}()
 	if err := server.Shutdown(ctx); err != nil {
-		log.Printf("Error occured on server shutting down: %s", err.Error())
+		log.Printf("Server shutting down failed: %s", err.Error())
 	}
 
 	if err := db.Close(ctx); err != nil {
-		log.Printf("Error occured on db connection close: %s", err.Error())
+		log.Printf("DB connection close failed: %s", err.Error())
 	}
+
+	log.Printf("Server gracefully stopped.\n")
 }
